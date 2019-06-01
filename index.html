@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>LED Editor</title>
+</head>
+<body>
+    <canvas id = "main" width = "800" height = "400"></canvas>
+    <div id = "terminal"></div>
+    <script>
+        var row = 8;
+        var col = 16;
+
+        var canvas  = document.getElementById("main");
+        var context = canvas.getContext("2d");
+
+        var pattern = [];
+
+        var terminal = document.getElementById("terminal");
+
+        var width = canvas.width;
+        var height = canvas.height;
+
+        var cursor = {'x': -1, 'y': -1};
+        var pi = -1;
+        var pj = -1;
+
+        let d2h = 
+            ['0', '1', '2', '3', 
+             '4', '5', '6', '7',
+             '8', '9', 'A', 'B',
+             'C', 'D', 'E', 'F'];
+
+        function convHex(bin_ary)
+        {
+            let former = 0;
+            let latter = 0;
+            for(let i = 0; i < 4; i++)
+            {
+                former += Math.pow(2, 3 - i) * bin_ary[i];
+                latter += Math.pow(2, 3 - i) * bin_ary[i + 4];
+            }
+
+            return d2h[former] + '' + d2h[latter];
+        }
+
+        function convert()
+        {
+            let rmap = pattern.map((p) => 
+            {
+                return p.map((e) => 
+                {
+                    let rev = 0;
+                    if(e == 1 || e == 3) rev = 1;
+                    return rev;
+                });
+            });
+
+            let gmap = pattern.map((p) => 
+            {
+                return p.map((e) => 
+                {
+                    let rev = 0;
+                    if(e == 2 || e == 3) rev = 1;
+                    return rev;
+                });
+            });
+
+            let disp = '';
+            for(let i = 0; i < col; i++)
+            {
+                disp += convHex(gmap[i]) + ' ' + convHex(rmap[i]) + '\n';
+            }
+
+            terminal.innerText = disp;
+        }
+
+        function render()
+        {
+            context.fillStyle = 'black';
+            context.fillRect(0, 0, width, height);
+
+            context.lineWidth = 1;
+            context.strokeStyle='white';
+            context.beginPath();
+            context.lineTo(width / 4, 0);
+            context.lineTo(width / 4, height);
+            context.closePath();
+            context.stroke();
+
+            context.lineWidth = 3;
+            context.strokeStyle='white';
+            context.beginPath();
+            context.lineTo(width / 2, 0);
+            context.lineTo(width / 2, height);
+            context.closePath();
+            context.stroke();
+
+            context.lineWidth = 1;
+            context.strokeStyle='white';
+            context.beginPath();
+            context.lineTo(width / 4 * 3, 0);
+            context.lineTo(width / 4 * 3, height);
+            context.closePath();
+            context.stroke();
+
+            context.lineWidth = 1;
+            context.strokeStyle='white';
+            context.beginPath();
+            context.lineTo(width / 2, 0);
+            context.lineTo(width / 2, height);
+            context.closePath();
+            context.stroke();
+
+            context.lineWidth = 1;
+            context.strokeStyle='white';
+            context.beginPath();
+            context.lineTo(0, height / 2);
+            context.lineTo(width, height / 2);
+            context.closePath();
+            context.stroke();
+            
+            var colors = ['gray', 'red', 'green', 'orange'];
+
+            for(var j = 0; j < col; j++){
+                for(var i = 0; i < row; i++){
+                    var x = j * width / col;
+                    var y = i * height / row;
+
+                    var vx = width / col / 2;
+                    var vy = height / row / 2;
+
+                    context.fillStyle = colors[pattern[j][i]];
+
+                    var r = 16;
+                    context.beginPath();
+                    context.arc(x + vx, y + vy, r, 0, Math.PI * 2, true);
+                    context.closePath();
+                    context.fill();
+
+                    if(j == pj && i == pi)
+                    {
+                        context.lineWidth = 3;
+                        context.strokeStyle = "aliceblue";
+                        context.beginPath();
+                        context.arc(x + vx, y + vy, r, 0, Math.PI * 2, true);
+                        context.closePath();
+                        context.stroke();
+                    }
+                }
+            }
+
+        }
+
+
+        function init()
+        {
+            // initialize matrix pattern with 0
+            for(var j = 0; j < col; j++)
+            {
+                var t = [];
+                for(var i = 0;i < row; i++)
+                {
+                    t.push(0);
+                }
+                pattern.push(t);
+            }
+
+            canvas.addEventListener('mousemove', function(event)
+            {
+                cursor.x = event.clientX;
+                cursor.y = event.clientY;
+
+                pj = parseInt(cursor.x * col / width); 
+                pi = parseInt(cursor.y * row / height);
+
+                render();
+            });
+
+            canvas.addEventListener('click', function(event)
+            {
+                pattern[pj][pi]++;
+                if(pattern[pj][pi] == 4) pattern[pj][pi] = 0;
+                 
+                render();
+                convert();
+            });
+
+        }
+
+
+        function main()
+        {
+            init();
+            render();
+            convert();
+        }
+
+        main();
+    </script>
+</body>
+</html>
