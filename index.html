@@ -51,7 +51,7 @@
                 'C', 'D', 'E', 'F'];
 
         function resize() {
-            width = window.innerWidth * 0.8;
+            width = window.innerWidth * 0.9;
             height = width / 2;
 
             canvas.setAttribute('width', width);
@@ -139,7 +139,7 @@
             context.closePath();
             context.stroke();
 
-            context.lineWidth = 3;
+            context.lineWidth = 5;
             context.strokeStyle = 'white';
             context.beginPath();
             context.lineTo(width / 2, 0);
