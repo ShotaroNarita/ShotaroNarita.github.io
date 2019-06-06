@@ -10,6 +10,7 @@ function init(){
     context.fillRect(0, 0, width, height);
 
     img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = 'https://shotaronarita.github.io/linetemplate.png';
 }
 
@@ -24,9 +25,9 @@ let dl = 3;
 
 let sl = 10;
 
-let censorL = {'x':0, 'y':0};
-let censorC = {'x':0, 'y':0};
-let censorR = {'x':0, 'y':0};
+let sensorL = {'x':0, 'y':0, 'i':-1};
+let sensorC = {'x':0, 'y':0, 'i':-1};
+let sensorR = {'x':0, 'y':0, 'i':-1};
 
 function loop()
 {
@@ -82,47 +83,48 @@ function loop()
     context.fillStyle='red';
     context.fill();  
 
-    censorC.x = x + c;
-    censorC.y = y + s;
+    sensorC.x = x + c;
+    sensorC.y = y + s;
 
-    censorL.x = censorC.x + Math.sin(theta) * sl;
-    censorL.y = censorC.y - Math.cos(theta) * sl;
+    sensorL.x = sensorC.x + Math.sin(theta) * sl;
+    sensorL.y = sensorC.y - Math.cos(theta) * sl;
 
-    censorR.x = censorC.x - Math.sin(theta) * sl;
-    censorR.y = censorC.y + Math.cos(theta) * sl;
+    sensorR.x = sensorC.x - Math.sin(theta) * sl;
+    sensorR.y = sensorC.y + Math.cos(theta) * sl;
 
-    context.beginPath();
-    context.arc(censorC.x, censorC.y, 3, 0, Math.PI * 2, true);
-    context.closePath();  
-    context.fillStyle='blue';
-    context.fill();  
-
-    context.beginPath();
-    context.arc(censorL.x, censorL.y , 3, 0, Math.PI * 2, true);
-    context.closePath();  
-    context.fillStyle='blue';
-    context.fill();  
-
-    context.beginPath();
-    context.arc(censorR.x, censorR.y, 3, 0, Math.PI * 2, true);
-    context.closePath();  
-    context.fillStyle='blue';
-    context.fill();  
-
-    censorL.x = parseInt(censorL.x);
-    censorL.y = parseInt(censorL.y);
-    censorC.x = parseInt(censorC.x);
-    censorC.y = parseInt(censorC.y);
-    censorR.x = parseInt(censorR.x);
-    censorR.y = parseInt(censorR.y);
+    // sensorL.x = parseInt(sensorL.x);
+    // sensorL.y = parseInt(sensorL.y);
+    // sensorC.x = parseInt(sensorC.x);
+    // sensorC.y = parseInt(sensorC.y);
+    // sensorR.x = parseInt(sensorR.x);
+    // sensorR.y = parseInt(sensorR.y);
 
     // let info = context.getImageData(100, 100, 1, 1);
-    let info = context.getImageData(censorL.x, censorL.y, 1, 1);
-    // console.log(censorL.x, censorL.y);
-    console.log(info.data);
-    document.getElementById('terminal').innerText = info.data;
-    //info.data;
-    
+    // let info = context.getImageData(sensorL.x, sensorL.y, 1, 1);
+    let info = context.getImageData(0, 0, width, height);
+    let idata = info.data;
+    let index = parseInt((width * sensorL.y + sensorL.x) * 4);
+    document.getElementById('terminal').innerText = idata[index] + ', ' + idata[index + 1] + ', ' + idata[index + 2];
+
+    sensorL.i = (idata[index] + idata[index + 1] + idata[index + 2])
+
+    context.beginPath();
+    context.arc(sensorC.x, sensorC.y, 3, 0, Math.PI * 2, true);
+    context.closePath();  
+    context.fillStyle='blue';
+    context.fill();  
+
+    context.beginPath();
+    context.arc(sensorL.x, sensorL.y , 3, 0, Math.PI * 2, true);
+    context.closePath();  
+    context.fillStyle='blue';
+    context.fill();  
+
+    context.beginPath();
+    context.arc(sensorR.x, sensorR.y, 3, 0, Math.PI * 2, true);
+    context.closePath();  
+    context.fillStyle='blue';
+    context.fill();  
 }
 
 function main(){
