@@ -7,11 +7,12 @@
     <title>Document</title>
     <script src="main.js"></script>
 </head>
-<body>
-    <canvas width = 600 height = 300 id = 'canvas'></canvas>
+<body onload="main()">
+    <canvas width = 600 height = 600 id = 'canvas'></canvas><br>
+    <button id='resetButton'>reset</button>
+    <button id='stopButton'>stop</button>
+    <button id='startButton'>start</button>
+    <button id='createButton'>new car</button>
     <div id='terminal'></div>
-    <script>
-        document.addEventListener('load', main())
-    </script>
 </body>
 </html>
